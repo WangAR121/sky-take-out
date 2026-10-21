@@ -19,7 +19,15 @@
     </modules>
     <properties>
         <mybatis.spring>2.2.0</mybatis.spring>
-        <lombok>1.18.20</lombok>
+        <!-- Lombok 1.18.20 无法在 JDK 21 上运行(JCImport.qualid 字段已被移除)，
+             1.18.30 起才支持 JDK 21，这里使用更新的 1.18.48 以兼容 JDK 21~26 -->
+        <lombok>1.18.48</lombok>
+        <!-- 编译目标字节码版本：Spring Boot 2.7.3 的打包插件只能解析 Java 18 及以下的
+             字节码，若改成 21 会在 repackage 阶段报
+             "Unsupported class file major version 65"，故固定为 1.8 -->
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <fastjson>1.2.76</fastjson>
         <commons.lang>2.6</commons.lang>
         <druid>1.2.1</druid>
@@ -124,4 +132,22 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <!-- 显式开启注解处理：JDK 23 起 javac 默认不再自动发现 classpath 上的
+                             注解处理器，不加这个参数 Lombok 的 @Data/@Slf4j 不会生效，
+                             会报 "找不到符号 getXxx()/log"（JDK 21 上同样兼容） -->
+                        <compilerArgs>
+                            <arg>-proc:full</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
