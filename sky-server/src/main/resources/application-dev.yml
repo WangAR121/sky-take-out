@@ -6,3 +6,7 @@ sky:
     database: sky_take_out
     username: root
     password: '@Wanganran1707'
+  alioss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    region: cn-beijing
+    bucketName: tlias-1707

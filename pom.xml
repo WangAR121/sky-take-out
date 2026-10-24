@@ -32,7 +32,7 @@
         <commons.lang>2.6</commons.lang>
         <druid>1.2.1</druid>
         <pagehelper>1.3.0</pagehelper>
-        <aliyun.sdk.oss>3.10.2</aliyun.sdk.oss>
+        <alibabacloud.oss.v2>0.6.0</alibabacloud.oss.v2>
         <knife4j>3.0.2</knife4j>
         <aspectj>1.9.4</aspectj>
         <jjwt>0.9.1</jjwt>
@@ -102,9 +102,27 @@
             </dependency>
 
             <dependency>
-                <groupId>com.aliyun.oss</groupId>
-                <artifactId>aliyun-sdk-oss</artifactId>
-                <version>${aliyun.sdk.oss}</version>
+                <groupId>com.aliyun</groupId>
+                <artifactId>alibabacloud-oss-v2</artifactId>
+                <version>${alibabacloud.oss.v2}</version>
+            </dependency>
+
+            <!-- alibabacloud-oss-v2 0.6.0 依赖 httpclient5 5.2+ 的 API（如 ConnectionConfig），
+                 Spring Boot 2.7.3 默认管理的是 5.1.3，运行会 NoClassDefFoundError，这里统一钉住 -->
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>5.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>5.3.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-h2</artifactId>
+                <version>5.3.4</version>
             </dependency>
 
             <dependency>
