@@ -60,7 +60,7 @@ public class DishServiceImpl implements DishService {
     public void deleteBantch(List<Long> ids) {
         List<Dish> dishList=dishMapper.getByIds(ids);
         for(Dish dish:dishList){
-            if(dish.getStatus()== StatusConstant.ENABLE){
+            if(StatusConstant.ENABLE.equals(dish.getStatus())){
                 throw new DeletionNotAllowedException("菜品"+dish.getName()+"处于启售状态,禁止删除");
             }
         }
