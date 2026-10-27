@@ -29,4 +29,11 @@ public interface DishMapper {
     List<Dish> getByIds(List<Long> ids);
 
     void deleteByIds(List<Long> ids);
+
+    DishVO getById(Long id);
+    @AutoFill(value = OperationType.UPDATE)
+    void update(Dish dish);
+    List<Dish> list(Dish dish);
+
+    List<Dish> getBySetmealId(Long setmealId);
 }

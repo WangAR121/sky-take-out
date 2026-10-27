@@ -2,13 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.DishMapper">
-
+    <resultMap id="DishVoMap" type="com.sky.vo.DishVO" autoMapping="true">
+        <id column="id" property="id"/>
+        <collection property="flavors" ofType="com.sky.entity.DishFlavor" autoMapping="true">
+            <id column="df_id" property="id"/>
+            <result column="df_name" property="name"/>
+            <result column="df_dishId" property="dishId"/>
+            <result column="value" property="value"/>
+        </collection>
+    </resultMap>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into dish(name, category_id, price, image, description, status, create_time, update_time, create_user, update_user)
             VALUES
         (#{name},#{categoryId},#{price},#{image},#{description},#{status},#{createTime},#{updateTime},#{createUser},#{updateUser})
     </insert>
+    <update id="update">
+        update dish
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+        </set>
+        where id = #{id}
+    </update>
     <delete id="deleteByIds">
         delete from dish where id in <foreach collection="ids" item="id" separator="," open="(" close=")">
                                             #{id}
@@ -34,5 +56,39 @@
                            <foreach collection="ids" item="id" separator="," open="(" close=")">
                                 #{id}
                             </foreach>
+    </select>
+    <select id="getById" resultMap="DishVoMap">
+        select d.id,
+               d.name,
+               d.status,
+               d.category_id,
+               d.description,
+               d.image,
+               d.price,
+               d.update_time,
+               df.id df_id,
+               df.name df_name,
+               df.dish_id df_dishId,
+               df.value value
+            from dish d left join dish_flavor df on d.id = df.dish_id
+            where d.id=#{id}
+    </select>
+    <select id="list" resultType="com.sky.entity.Dish">
+        select d.* from dish d
+        <where>
+            <if test="name!=null">
+                and name like concat("%",#{name},"%")
+            </if>
+            <if test="status !=null">
+                and status=#{status}
+            </if>
+            <if test="categoryId !=null">
+                and category_id=#{categoryId}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+    <select id="getBySetmealId" resultType="com.sky.entity.Dish">
+        select d.* from dish d left join setmeal_dish s on d.id = s.dish_id where s.setmeal_id=#{setmealId}
     </select>
 </mapper>
