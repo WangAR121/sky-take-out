@@ -16,3 +16,5 @@ sky:
   wechat:
     appid: wx92e577b42449dd6c
     secret: 130d4658644536be6abb33ffc49ec6e5
+    # 本地开发：没有企业资质，开启模拟支付，跳过真实微信支付
+    mock-pay: true

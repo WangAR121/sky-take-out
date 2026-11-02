@@ -55,3 +55,5 @@ sky:
     # 注意不要写成 ${sky.wechat.appid}，那是自引用，会被 Spring 判定为循环占位符
     appid: ${WX_APPID:}
     secret: ${WX_APP_SECRET:}
+    # 模拟支付开关：false=真实微信支付；true=跳过微信支付（不调统一下单、不调起支付）
+    mock-pay: ${WX_MOCK_PAY:false}

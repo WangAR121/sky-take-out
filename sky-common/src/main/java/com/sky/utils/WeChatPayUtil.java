@@ -164,6 +164,10 @@ public class WeChatPayUtil {
      * @return
      */
     public JSONObject pay(String orderNum, BigDecimal total, String description, String openid) throws Exception {
+        // 开启模拟支付时，不调用微信统一下单接口，直接返回一份"假的"调起支付参数
+        if (Boolean.TRUE.equals(weChatProperties.getMockPay())) {
+            return mockPayResult(orderNum);
+        }
         //统一下单，生成预支付交易单
         String bodyAsString = jsapi(orderNum, total, description, openid);
         //解析返回结果
@@ -206,6 +210,23 @@ public class WeChatPayUtil {
     }
 
     /**
+     * 模拟支付：不请求微信服务器，直接构造一份返回给小程序的数据。
+     * mock=true 是给小程序看的标记，小程序看到它就不调 wx.requestPayment，
+     * 改为调后端的 /user/order/mockPay/{orderNumber} 完成支付状态流转。
+     */
+    private JSONObject mockPayResult(String orderNum) {
+        String timeStamp = String.valueOf(System.currentTimeMillis() / 1000);
+        JSONObject jo = new JSONObject();
+        jo.put("mock", true);
+        jo.put("timeStamp", timeStamp);
+        jo.put("nonceStr", RandomStringUtils.randomNumeric(32));
+        jo.put("package", "prepay_id=mock_" + orderNum);
+        jo.put("signType", "RSA");
+        jo.put("paySign", "MOCK_PAY_SIGN");
+        return jo;
+    }
+
+    /**
      * 申请退款
      *
      * @param outTradeNo    商户订单号
@@ -215,6 +236,15 @@ public class WeChatPayUtil {
      * @return
      */
     public String refund(String outTradeNo, String outRefundNo, BigDecimal refund, BigDecimal total) throws Exception {
+        // 模拟支付模式下没有真实交易，直接返回退款成功，避免抛异常影响"取消/拒单"等业务
+        if (Boolean.TRUE.equals(weChatProperties.getMockPay())) {
+            JSONObject mock = new JSONObject();
+            mock.put("status", "SUCCESS");
+            mock.put("mock", true);
+            mock.put("out_trade_no", outTradeNo);
+            mock.put("out_refund_no", outRefundNo);
+            return mock.toJSONString();
+        }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("out_trade_no", outTradeNo);
         jsonObject.put("out_refund_no", outRefundNo);

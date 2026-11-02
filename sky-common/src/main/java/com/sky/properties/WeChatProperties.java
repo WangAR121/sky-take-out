@@ -19,5 +19,11 @@ public class WeChatProperties {
     private String weChatPayCertFilePath; //平台证书
     private String notifyUrl; //支付成功的回调地址
     private String refundNotifyUrl; //退款成功的回调地址
+    /**
+     * 是否开启模拟支付：true 时不调用微信支付，直接返回假的调起支付参数，
+     * 由小程序调用 /user/order/mockPay/{orderNumber} 完成"支付"。
+     * 本地没有企业资质、无法开通微信支付时使用；拿到资质后改成 false 即可无缝切回真实支付。
+     */
+    private Boolean mockPay = false;
 
 }
