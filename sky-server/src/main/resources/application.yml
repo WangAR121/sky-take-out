@@ -57,3 +57,7 @@ sky:
     secret: ${WX_APP_SECRET:}
     # 模拟支付开关：false=真实微信支付；true=跳过微信支付（不调统一下单、不调起支付）
     mock-pay: ${WX_MOCK_PAY:false}
+  shop:
+    address: ${SHOP_ADDRESS}
+  gaode:
+    ak: ${GAODE_ACCESS_KEY}

@@ -9,4 +9,19 @@
                 (#{od.name},#{od.image},#{od.orderId},#{od.dishId},#{od.setmealId},#{od.dishFlavor},#{od.number},#{od.amount})
             </foreach>
     </insert>
+    <select id="getByOrderIds" resultType="com.sky.entity.OrderDetail">
+        select * from order_detail
+        <where>
+            <choose>
+                <!-- 集合为空时用 1 = 0 兜底，绝不能退化成不带条件查询全表 -->
+                <when test="orderIds != null and orderIds.size() > 0">
+                    order_id in
+                    <foreach collection="orderIds" item="orderId" separator="," open="(" close=")">
+                        #{orderId}
+                    </foreach>
+                </when>
+                <otherwise>1 = 0</otherwise>
+            </choose>
+        </where>
+    </select>
 </mapper>

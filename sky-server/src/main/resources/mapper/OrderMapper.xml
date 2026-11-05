@@ -42,4 +42,33 @@
         where id = #{id}
 
     </update>
+    <select id="getOrders" resultType="com.sky.vo.OrderVO">
+        select * from orders <where>
+        <if test="userId!=null">
+            and user_id=#{userId}
+        </if>
+        <if test="number!=null and number!=''">
+            and number like concat("%",#{number},"%")
+        </if>
+        <if test="status!=null">
+            and status=#{status}
+        </if>
+        <if test="phone != null and phone!=''">
+            and phone like concat('%',#{phone},'%')
+        </if>
+        <if test="beginTime!=null">
+            and order_time>=#{beginTime}
+        </if>
+        <if test="endTime != null">
+            and order_time &lt;=#{endTime}
+        </if>
+    </where>
+        order by order_time desc
+    </select>
+    <select id="getStatistics" resultType="com.sky.vo.OrderStatisticsVO">
+        select count(case when o.status=2 then 1 else null end) toBeConfirmed,
+               count(case when o.status=3 then 1 else null end) confirmed,
+               count(case when o.status=4 then 1 else null end) deliveryInProgress
+               from orders o;
+    </select>
 </mapper>
