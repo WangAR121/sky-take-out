@@ -42,6 +42,37 @@
         where id = #{id}
 
     </update>
+    <update id="updateList">
+        <foreach collection="ordersList" item="o" separator=";">
+            update orders <set>
+            <if test="o.cancelReason != null and o.cancelReason!='' ">
+                cancel_reason=#{o.cancelReason},
+            </if>
+            <if test="o.rejectionReason != null and o.rejectionReason!='' ">
+                rejection_reason=#{o.rejectionReason},
+            </if>
+            <if test="o.cancelTime != null">
+                cancel_time=#{o.cancelTime},
+            </if>
+            <if test="o.payStatus != null">
+                pay_status=#{o.payStatus},
+            </if>
+            <if test="o.payMethod != null">
+                pay_method=#{o.payMethod},
+            </if>
+            <if test="o.checkoutTime != null">
+                checkout_time=#{o.checkoutTime},
+            </if>
+            <if test="o.status != null">
+                status = #{o.status},
+            </if>
+            <if test="o.deliveryTime != null">
+                delivery_time = #{o.deliveryTime}
+            </if>
+        </set>
+            where id = #{o.id}
+        </foreach>
+    </update>
     <select id="getOrders" resultType="com.sky.vo.OrderVO">
         select * from orders <where>
         <if test="userId!=null">
