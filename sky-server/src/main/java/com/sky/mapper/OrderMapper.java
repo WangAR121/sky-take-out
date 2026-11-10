@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface OrderMapper{
@@ -36,4 +37,6 @@ public interface OrderMapper{
     List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTime);
 
     void updateList(List<Orders> ordersList);
+
+    List<Map<String, Object>> orderSumMap(LocalDateTime startTime, LocalDateTime endTime);
 }

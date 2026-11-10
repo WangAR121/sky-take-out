@@ -102,4 +102,11 @@
                count(case when o.status=4 then 1 else null end) deliveryInProgress
                from orders o;
     </select>
+    <select id="orderSumMap" resultType="java.util.Map">
+        SELECT date(order_time)  day, sum(amount) AS turnover
+        FROM orders
+        where order_time between #{startTime} and #{endTime}
+          and status =5
+        group by date(order_time)
+    </select>
 </mapper>
