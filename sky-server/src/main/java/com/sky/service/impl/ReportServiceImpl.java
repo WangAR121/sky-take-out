@@ -4,6 +4,7 @@ import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
+import com.sky.vo.OrderReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import lombok.extern.slf4j.Slf4j;
@@ -103,6 +104,63 @@ public class ReportServiceImpl implements ReportService {
                 .dateList(dateList)
                 .totalUserList(totalUserList)
                 .newUserList(newUserList)
+                .build();
+    }
+
+    @Override
+    public OrderReportVO getordersStatistics(LocalDate begin, LocalDate end) {
+        LocalDate originalBegin = begin;
+        List<String> dateStrList = new ArrayList<>();
+        List<Map<String, Object>> ordesCompletedMap = new ArrayList<>();
+        List<Map<String, Object>> ordesMap = new ArrayList<>();
+        Map<String, Integer> completedNumber = new HashMap<>();
+        Map<String, Integer> AllNumber = new HashMap<>();
+        while (!begin.isAfter(end)) {
+            String dateStr = begin.toString();
+            dateStrList.add(dateStr);
+            completedNumber.put(dateStr,0);
+            AllNumber.put(dateStr,0);
+            begin = begin.plusDays(1);
+        }
+        LocalDateTime startTime = LocalDateTime.of(originalBegin, LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
+        ordesCompletedMap=orderMapper.getCompletedOrderNumberByTime(startTime,endTime);
+        ordesMap=orderMapper.getOrderNumber(startTime,endTime);
+        for(Map<String,Object> order: ordesCompletedMap){
+            String day = order.get("day").toString();
+            //MySQL 的 count(*) 是 BIGINT，MyBatis 映射成 Long，不能直接强转 Integer
+            Integer number = order.get("number") == null ? 0 : ((Number) order.get("number")).intValue();
+            completedNumber.put(day,number);
+        }
+        for(Map<String,Object> order: ordesMap){
+            String day = order.get("day").toString();
+            Integer number = order.get("number") == null ? 0 : ((Number) order.get("number")).intValue();
+            AllNumber.put(day,number);
+        }
+        Integer completedAll=0;
+        Integer ALLNumber=0;
+        List<Integer> orderList=new ArrayList<>();
+        List<Integer> orderComList=new ArrayList<>();
+        for(String date:dateStrList){
+            Integer completed = completedNumber.getOrDefault(date, 0);
+            Integer number=AllNumber.getOrDefault(date, 0);
+            orderList.add(number);
+            orderComList.add(completed);
+            completedAll+=completed;
+            ALLNumber+=number;
+        }
+        // 注意：两个 Integer 直接相除是整除，会恒为 0，必须转成 double
+        Double orderCompletionRate=ALLNumber==0?0.0:completedAll * 1.0 / ALLNumber;
+        String dateList=String.join(",",dateStrList);
+        String orderCountList=orderList.stream().map(Object::toString).collect(Collectors.joining(","));
+        String validOrderCountList=orderComList.stream().map(Object::toString).collect(Collectors.joining(","));
+        return OrderReportVO.builder()
+                .dateList(dateList)
+                .orderCountList(orderCountList)
+                .validOrderCountList(validOrderCountList)
+                .totalOrderCount(ALLNumber)
+                .validOrderCount(completedAll)
+                .orderCompletionRate(orderCompletionRate)
                 .build();
     }
 }

@@ -109,4 +109,18 @@
           and status =5
         group by date(order_time)
     </select>
+    <select id="getCompletedOrderNumberByTime" resultType="java.util.Map">
+        SELECT date(order_time)  day, count(*)  number
+        FROM orders
+        where order_time &gt;= #{startTime} and order_time &lt;#{endTime}
+          and status =5
+        group by date(order_time)
+    </select>
+    <select id="getOrderNumber" resultType="java.util.Map">
+        SELECT date(order_time)  day, count(*)  number
+        FROM orders
+        where order_time &gt;= #{startTime} and order_time &lt;#{endTime}
+        group by date(order_time)
+    </select>
+
 </mapper>

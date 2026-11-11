@@ -39,4 +39,8 @@ public interface OrderMapper{
     void updateList(List<Orders> ordersList);
 
     List<Map<String, Object>> orderSumMap(LocalDateTime startTime, LocalDateTime endTime);
+
+    List<Map<String, Object>> getCompletedOrderNumberByTime(LocalDateTime startTime, LocalDateTime endTime);
+
+    List<Map<String, Object>> getOrderNumber(LocalDateTime startTime, LocalDateTime endTime);
 }
