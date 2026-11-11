@@ -5,6 +5,7 @@ import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import lombok.extern.slf4j.Slf4j;
@@ -161,6 +162,26 @@ public class ReportServiceImpl implements ReportService {
                 .totalOrderCount(ALLNumber)
                 .validOrderCount(completedAll)
                 .orderCompletionRate(orderCompletionRate)
+                .build();
+    }
+
+    @Override
+    public SalesTop10ReportVO getOrderTop10(LocalDate begin, LocalDate end) {
+        LocalDateTime startTime = LocalDateTime.of(begin, LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
+        List<Map<String,Object>> Top10List=orderMapper.getTop10ByTime(startTime,endTime);
+        List<String> dishList=Top10List.stream().map(map1->{
+            return map1.get("dish").toString();
+        }).collect(Collectors.toList());
+        List<Long> orderNumber=Top10List.stream().map(map1->{
+            Object number = map1.get("number");
+            return number==null?0L:((Number)number).longValue();
+        }).collect(Collectors.toList());
+        String nameList=String.join(",",dishList);
+        String numberList=orderNumber.stream().map(Object::toString).collect(Collectors.joining(","));
+        return SalesTop10ReportVO.builder()
+                .nameList(nameList)
+                .numberList(numberList)
                 .build();
     }
 }

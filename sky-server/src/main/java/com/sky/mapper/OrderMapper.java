@@ -43,4 +43,6 @@ public interface OrderMapper{
     List<Map<String, Object>> getCompletedOrderNumberByTime(LocalDateTime startTime, LocalDateTime endTime);
 
     List<Map<String, Object>> getOrderNumber(LocalDateTime startTime, LocalDateTime endTime);
+
+    List<Map<String, Object>> getTop10ByTime(LocalDateTime startTime, LocalDateTime endTime);
 }

@@ -122,5 +122,11 @@
         where order_time &gt;= #{startTime} and order_time &lt;#{endTime}
         group by date(order_time)
     </select>
+    <select id="getTop10ByTime" resultType="java.util.Map">
+        select od.name dish,sum(od.number) number from orders o join order_detail od on o.id = od.order_id
+        where status=5 and  o.order_time &gt;= #{startTime} and o.order_time &lt;#{endTime}
+        group by od.name
+        order by number desc limit 10
+    </select>
 
 </mapper>
