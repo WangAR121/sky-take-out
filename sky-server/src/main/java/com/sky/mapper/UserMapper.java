@@ -20,4 +20,6 @@ public interface UserMapper {
     List<Map<String, Long>> getIncreaseUserByTime(LocalDateTime startTime, LocalDateTime endTime);
     @Select("select count(*) from user where create_time<#{startTime}")
     Long getNumber(LocalDateTime startTime);
+
+    Integer countByMap(Map map);
 }
